@@ -12,7 +12,7 @@ router.get('/', async (req, res) => {
       ['likes', 'DESC']
     ],
     attributes: { 
-      exclude: ['userId', 'id', 'url', 'title', 'likes', 'createdAt', 'updatedAt'],
+      exclude: ['userId', 'id', 'url', 'title', 'likes', 'createdAt', 'updatedAt', 'year'],
       include: [[Sequelize.fn('COUNT', Sequelize.col('author')), 'articles'], [Sequelize.fn('SUM', Sequelize.col('likes')), 'likes']]
     },
     group: ['author']
