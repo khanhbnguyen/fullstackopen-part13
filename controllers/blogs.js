@@ -1,7 +1,7 @@
 const { SECRET } = require('../util/config')
 const jwt = require('jsonwebtoken')
 
-const { Op, Sequelize } = require('sequelize')
+const { Op } = require('sequelize')
 
 const router = require('express').Router()
 
@@ -55,8 +55,13 @@ router.get('/', async (req, res) => {
 
 router.post('/', tokenExtractor, async (req, res) => {
     const user = await User.findByPk(req.decodedToken.id)
-    const blog = await Blog.create({...req.body, userId: user.id, date: new Date()})
-    res.json(blog)
+    try {
+      const blog = await Blog.create({...req.body, userId: user.id, date: new Date()})
+      return res.json(blog)
+    } catch {
+      return res.status(400).json({ error: 'invalid year' })
+    }
+    
 })
 
 router.put('/:id', blogFinder, async (req, res) => {
