@@ -21,6 +21,9 @@ router.post('/', async (request, response) => {
     })
   }
 
+  request.session.user = user
+  request.session.cookie.maxAge = 30000
+
   const userForToken = {
     username: user.username,
     id: user.id,
