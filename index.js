@@ -3,10 +3,13 @@ const session = require('express-session')
 require('express-async-errors')
 
 const app = express()
-const { PORT, SECRET } = require('./util/config')
+const { PORT, SECRET, DATABASE_URL } = require('./util/config')
 const { connectToDatabase } = require('./util/db')
 
 app.use(session({
+  store: new (require('connect-pg-simple')(session))({
+    conString: DATABASE_URL
+  }),
   secret: SECRET,
   resave: false,
   saveUninitialized: true

@@ -4,6 +4,7 @@
     "migration:down": "node util/rollback.js"
   },
   "dependencies": {
+    "connect-pg-simple": "^9.0.1",
     "dotenv": "^16.4.5",
     "express": "^4.19.2",
     "express-async-errors": "^3.1.1",

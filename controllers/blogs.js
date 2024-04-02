@@ -13,6 +13,11 @@ const blogFinder = async (req, res, next) => {
     next()
 }
 
+function isAuthenticated (req, res, next) {
+  if (req.session.user) next()
+  else return res.status(401).json({ error: 'invalid session' })
+}
+
 const tokenExtractor = (req, res, next) => {
     const authorization = req.get('authorization')
     if (authorization && authorization.toLowerCase().startsWith('bearer ')) {
@@ -53,8 +58,8 @@ router.get('/', async (req, res) => {
     res.json(blogs)
 })
 
-router.post('/', tokenExtractor, async (req, res) => {
-    const user = await User.findByPk(req.decodedToken.id)
+router.post('/', isAuthenticated, async (req, res) => {
+    const user = await User.findByPk(req.session.user.id)
     try {
       const blog = await Blog.create({...req.body, userId: user.id, date: new Date()})
       return res.json(blog)
@@ -76,10 +81,10 @@ router.put('/:id', blogFinder, async (req, res) => {
 
 })
 
-router.delete('/:id', [blogFinder, tokenExtractor], async (req, res) => {
+router.delete('/:id', [blogFinder, isAuthenticated], async (req, res) => {
     if (req.blog) {
-      if (req.blog.userId != req.decodedToken.id) {
-        return res.status(401).json({ error: 'token invalid' })
+      if (req.blog.userId != req.session.user.id) {
+        return res.status(401).json({ error: 'user not owner' })
       }
 
       await req.blog.destroy()

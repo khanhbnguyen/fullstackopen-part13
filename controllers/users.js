@@ -47,6 +47,7 @@ router.post('/', async (req, res) => {
     const user = await User.create(req.body)
     return res.json(user)
   } catch(error) {
+    console.log(error)
     return res.status(400).json({ error: 'Validation isEmail on username failed' })
   }
 })
@@ -57,7 +58,7 @@ router.put('/:username', isAuthenticated, async (req, res) => {
       username: req.params.username
     }
   })
-  console.log(req.session.cookie.maxAge)
+
   if (user) {
     if (req.session.user.username != req.params.username) {
       return res.status(401).json({ error: 'user not owner' })
